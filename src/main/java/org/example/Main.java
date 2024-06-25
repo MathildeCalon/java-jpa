@@ -9,10 +9,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import static org.example.Entity.Alimentary.*;
+import static org.example.Entity.GlobalVariables.em;
+import static org.example.Entity.GlobalVariables.emf;
 
 public class Main {
     public static void main(String[] args) {
         ihmMenu();
+        em.close();
+        emf.close();
     }
 
     public static void newAnimal(String name, int age, Enum<Alimentary> diet, LocalDate arrival){
@@ -22,36 +26,22 @@ public class Main {
         animal.setDiet(diet);
         animal.setArrivalDate(arrival);
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPA_exercice01");
-        EntityManager em = emf.createEntityManager();
 
         em.getTransaction().begin();
         em.persist(animal);
         em.getTransaction().commit();
-
-        em.close();
-        emf.close();
     }
 
     private static void getOneAnimal(int id){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPA_exercice01");
-        EntityManager em = emf.createEntityManager();
-
         try {
             Animal animal = em.find(Animal.class, id);
             System.out.println(animal);
         } catch (EntityNotFoundException e){
             System.out.println(e.getMessage());
         }
-
-        em.close();
-        emf.close();
     }
 
     private static void getAnimalByName(String name){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPA_exercice01");
-        EntityManager em = emf.createEntityManager();
-
         try {
             Query query = em.createQuery("select a from Animal a where a.name= :name");
             query.setParameter("name", name);
@@ -62,14 +52,9 @@ public class Main {
         } catch (EntityNotFoundException e){
             System.out.println(e.getMessage());
         }
-        em.close();
-        emf.close();
     }
 
     private static void getAnimalByDiet(Enum<Alimentary> diet){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPA_exercice01");
-        EntityManager em = emf.createEntityManager();
-
         try {
             Query query = em.createQuery("select a from Animal a where a.diet= :diet");
             query.setParameter("diet", diet);
@@ -80,8 +65,6 @@ public class Main {
         } catch (EntityNotFoundException e){
             System.out.println(e.getMessage());
         }
-        em.close();
-        emf.close();
     }
 
     private static void ihmMenu(){
@@ -100,8 +83,8 @@ public class Main {
                 int age = scanner.nextInt();
                 System.out.println("Régime alimentaire ?");
                 System.out.println("1. Carnivore");
-                System.out.println("1. Herbivore");
-                System.out.println("1. Omnivore");
+                System.out.println("2. Herbivore");
+                System.out.println("3. Omnivore");
                 int dietInt = scanner.nextInt();
                 Enum<Alimentary> diet = switch (dietInt) {
                     case (1) -> CARNIVORE;
@@ -112,7 +95,28 @@ public class Main {
                 System.out.println("Date d'arrivée ?");
                 String arrival = scanner.next();
                 LocalDate arrivalDate = LocalDate.parse(arrival);
-                newAnimal(name, age, diet, arrivalDate);
+                newAnimal(name, age, diet, arrivalDate); break;
+            case (2) :
+                System.out.println("Quel id ?");
+                int animalId = scanner.nextInt();
+                getOneAnimal(animalId); break;
+            case (3) :
+                System.out.println("Quel nom ?");
+                String animalName = scanner.next();
+                getAnimalByName(animalName); break;
+            case (4) :
+                System.out.println("Quel régime alimentaire ?");
+                System.out.println("1. Carnivore");
+                System.out.println("2. Herbivore");
+                System.out.println("3. Omnivore");
+                int dietType = scanner.nextInt();
+                Enum<Alimentary> diet2 = switch (dietType) {
+                    case (1) -> CARNIVORE;
+                    case (2) -> HERBIVORE;
+                    case (3) -> OMNIVORE;
+                    default -> null;
+                };
+                getAnimalByDiet(diet2); break;
         }
     }
 }
