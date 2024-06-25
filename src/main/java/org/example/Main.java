@@ -6,20 +6,13 @@ import org.example.Entity.Animal;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Scanner;
 
-import static org.example.Entity.Alimentary.CARNIVORE;
+import static org.example.Entity.Alimentary.*;
 
 public class Main {
     public static void main(String[] args) {
-//        newAnimal("Simba", 4, CARNIVORE, LocalDate.now());
-//        newAnimal("Baloo", 10, Alimentary.CARNIVORE, LocalDate.now());
-//        newAnimal("Bambi", 1, Alimentary.HERBIVORE, LocalDate.now());
-//        newAnimal("Bambi", 5, Alimentary.HERBIVORE, LocalDate.now());
-
-
-        getOneAnimal(4);
-        getAnimalByName("Bambi");
-        getAnimalByDiet(CARNIVORE);
+        ihmMenu();
     }
 
     public static void newAnimal(String name, int age, Enum<Alimentary> diet, LocalDate arrival){
@@ -94,7 +87,32 @@ public class Main {
     private static void ihmMenu(){
         System.out.println("1. Ajouter un animal");
         System.out.println("2. Chercher un animal par son id");
-        System.out.println("2. Chercher un/des animaux par leur nom");
-        System.out.println("2. Chercher un/des animaux par leur régime");
+        System.out.println("3. Chercher un/des animaux par leur nom");
+        System.out.println("4. Chercher un/des animaux par leur régime");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+
+        switch(choice) {
+            case (1):
+                System.out.println("Quel nom ?");
+                String name = scanner.next();
+                System.out.println("Age ?");
+                int age = scanner.nextInt();
+                System.out.println("Régime alimentaire ?");
+                System.out.println("1. Carnivore");
+                System.out.println("1. Herbivore");
+                System.out.println("1. Omnivore");
+                int dietInt = scanner.nextInt();
+                Enum<Alimentary> diet = switch (dietInt) {
+                    case (1) -> CARNIVORE;
+                    case (2) -> HERBIVORE;
+                    case (3) -> OMNIVORE;
+                    default -> null;
+                };
+                System.out.println("Date d'arrivée ?");
+                String arrival = scanner.next();
+                LocalDate arrivalDate = LocalDate.parse(arrival);
+                newAnimal(name, age, diet, arrivalDate);
+        }
     }
 }
